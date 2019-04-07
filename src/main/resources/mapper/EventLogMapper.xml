@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    <mapper namespace="com.example.harry.dao.EventLogMapper">
+    <resultMap id="BaseMap" type="com.example.harry.entity.EventLog">
+	  <id column="id" property="id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+	  <result column="start_time" property="time" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
+	  <result column="log_detail" property="logDetail" jdbcType="VARCHAR" javaType="java.lang.String"/>
+	</resultMap>
+    	<insert id="insertEventLog"  parameterType="EventLog" useGeneratedKeys="true" keyProperty="id">
+    		insert into "eventLog" (start_time,log_detail) values (now(),#{logDetail});
+    	</insert>
+
+		<select id="deleteOverdueLog" resultType="map">
+			DELETE
+			FROM "eventLog"
+			<![CDATA[ WHERE start_time < now()::TIMESTAMP + '-${overdueDays} days']]>
+			RETURNING id, start_time, log_detail;
+		</select>
+
+    </mapper>
